@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# React Native
+*.rncache
+*.expo
+.expo-shared
+build/
+dist/
+ios/Pods/
+ios/Podfile.lock
+android/.gradle/
+android/app/build/
+android/app/release/
+android/app/debug/
+*.jks
+*.keystore
+*.iml
+.idea/
+
+# Environment
+.env
+
+# Logs
+logs/
+*.log
+
+# Misc
+.DS_Store
+Thumbs.db
+tmp/
+temp/
