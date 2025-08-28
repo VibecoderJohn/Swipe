@@ -7,7 +7,7 @@ import requests
 import base64
 import os
 from datetime import datetime
-from paystackapi import Paystack  # Import Paystack class
+from paystackapi.paystack import Paystack  # Correct import for Paystack class
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
@@ -217,3 +217,5 @@ def execute_transaction():
             return jsonify({'error': response['message'], 'code': 400}), 400
     except Exception as e:
         return jsonify({'error': str(e), 'code': 400}), 400
+
+</grok:
