@@ -7,7 +7,7 @@ import requests
 import base64
 import os
 from datetime import datetime
-from paystackapi.transaction import Transaction
+from paystackapi import Paystack  # Import Paystack class
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
@@ -17,7 +17,7 @@ jwt = JWTManager(app)
 
 # Paystack Configuration
 PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY')
-paystackapi.api_key = PAYSTACK_SECRET_KEY
+paystack = Paystack(secret_key=PAYSTACK_SECRET_KEY)  # Instantiate Paystack
 
 # Mono Configuration
 MONO_SECRET_KEY = os.environ.get('MONO_SECRET_KEY')
@@ -197,7 +197,7 @@ def execute_transaction():
         return jsonify({'error': 'Transaction not authenticated', 'code': 400}), 400
 
     try:
-        response = Transaction.initialize(
+        response = paystack.transaction.initialize(
             amount=int(transaction['amount'] * 100),  # Convert to kobo
             email=transaction['recipient'],
             reference=str(transaction['_id'])
@@ -217,6 +217,3 @@ def execute_transaction():
             return jsonify({'error': response['message'], 'code': 400}), 400
     except Exception as e:
         return jsonify({'error': str(e), 'code': 400}), 400
-
-if __name__ == '__main__':
-    app.run(debug=True)
