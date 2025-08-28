@@ -1,0 +1,25 @@
+{
+  "name": "biosecurepay-frontend",
+  "version": "1.0.0",
+  "main": "App.js",
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.81.0",
+    "axios": "1.11.0",
+    "react-native-biometrics": "3.0.1",
+    "@react-native-voice/voice": "3.2.4",
+    "react-native-plaid-link-sdk": "12.2.1",
+    "@stripe/stripe-react-native": "0.51.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "metro-react-native-babel-preset": "0.66.0"
+  },
+  "private": true
+}
