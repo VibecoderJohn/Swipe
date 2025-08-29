@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BioSecure Pay</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #2c3e50; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to BioSecure Pay</h1>
+    <p>The API is running smoothly. Use the following endpoints to interact:</p>
+    <ul>
+        <li><a href="/api/v1/register">Register a New User</a></li>
+        <li><a href="/api/v1/kyc/verify">Verify KYC</a> (requires authentication)</li>
+        <li><a href="/api/v1/enroll-biometrics">Enroll Biometrics</a> (requires authentication)</li>
+        <li><a href="/api/v1/link-account">Link Bank Account</a> (requires authentication)</li>
+        <li><a href="/api/v1/transaction/initiate">Initiate Transaction</a> (requires authentication)</li>
+    </ul>
+    <p>Note: Use a tool like Postman or cURL for POST requests and authentication.</p>
+</body>
+</html>
