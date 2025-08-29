@@ -23,6 +23,11 @@ paystack = Paystack(secret_key=PAYSTACK_SECRET_KEY)  # Instantiate Paystack
 MONO_SECRET_KEY = os.environ.get('MONO_SECRET_KEY')
 MONO_API_BASE = 'https://api.withmono.com'
 
+# Default Route
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({'message': 'BioSecure Pay API is running', 'status': 'online'}), 200
+
 # Register User
 @app.route('/api/v1/register', methods=['POST'])
 def register():
