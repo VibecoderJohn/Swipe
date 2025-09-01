@@ -44,7 +44,6 @@ def kyc_verify():
     documents = data.get('documents', [])
     if not bvn or not documents:
         return jsonify({"error": "BVN and documents required"}), 400
-    # Mono KYC (mock for MVP)
     headers = {"mono-sec-key": Config.MONO_SECRET_KEY}
     response = requests.post(
         "https://api.withmono.com/v1/kyc/bvn",
@@ -94,7 +93,6 @@ def link_account():
     mono_code = data.get('monoCode')
     if not mono_code:
         return jsonify({"error": "Mono code required"}), 400
-    # Mono account linking
     headers = {"mono-sec-key": Config.MONO_SECRET_KEY}
     response = requests.post(
         "https://api.withmono.com/account/auth",
@@ -123,7 +121,7 @@ def list_accounts():
 def initiate_transaction():
     user_id = get_jwt_identity()
     data = request.get_json()
-    amount = data.get('amount')  # in kobo
+    amount = data.get('amount')
     recipient = data.get('recipient')
     account_id = data.get('accountId')
     if not amount or not recipient or not account_id:
