@@ -1,0 +1,8 @@
+import analytics from '@react-native-firebase/analytics';
+
+export const logRegister = () => analytics().logEvent('register_success');
+export const logKYC = () => analytics().logEvent('kyc_completed');
+export const logBiometricEnrolled = (type) => analytics().logEvent('biometric_enrolled', { type });
+export const logTransactionInitiated = (amount, recipient) => analytics().logEvent('transaction_initiated', { amount, recipient });
+export const logTransactionAuthenticated = () => analytics().logEvent('transaction_authenticated');
+export const logTransactionExecuted = () => analytics().logEvent('transaction_executed');
