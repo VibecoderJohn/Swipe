@@ -1,0 +1,47 @@
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Config from 'react-native-config';
+
+const api = axios.create({
+  baseURL: Config.API_URL,
+});
+
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      AsyncStorage.removeItem('token');
+    }
+    throw error;
+  }
+);
+
+export const enrollBiometric = async (type, template) => {
+  return api.post('/enroll-biometrics', { type, template });
+};
+
+export const linkAccount = async (monoCode) => {
+  return api.post('/accounts/link', { monoCode });
+};
+
+export const initiateTransaction = async (amount, recipient, accountId) => {
+  return api.post('/transaction/initiate', { amount, recipient, accountId });
+};
+
+export const authenticateTransaction = async (transactionId, biometricTypes, templates) => {
+  return api.post(`/transaction/authenticate/${transactionId}`, { biometricTypes, templates });
+};
+
+export const executeTransaction = async (transactionId) => {
+  return api.post(`/transaction/execute/${transactionId}`);
+};
+
+export default api;
