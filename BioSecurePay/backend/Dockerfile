@@ -1,10 +1,10 @@
-  FROM python:3.9-slim
+FROM python:3.9-slim
 
-   WORKDIR /app
+  WORKDIR /app
 
-   COPY backend/requirements.txt .
-   RUN pip install --no-cache-dir -r requirements.txt
+  COPY backend/requirements.txt .
+  RUN pip install --no-cache-dir -r requirements.txt
 
-   COPY backend/ .
+  COPY backend/ .
 
-   CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
+  CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
