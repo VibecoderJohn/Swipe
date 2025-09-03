@@ -1,0 +1,27 @@
+import React from 'react';
+import { View, Button, StyleSheet } from 'react-native';
+import { linkAccount } from '../api/api';
+
+const DashboardScreen = ({ navigation }) => {
+  const handleLinkAccount = async () => {
+    try {
+      await linkAccount('mock_mono_code');
+      Alert.alert('Success', 'Account linked');
+    } catch (error) {
+      Alert.alert('Error', error.response?.data?.error || 'Account linking failed');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Button title="Link Account" onPress={handleLinkAccount} />
+      <Button title="Start Transaction" onPress={() => navigation.navigate('Transaction')} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+});
+
+export default DashboardScreen;

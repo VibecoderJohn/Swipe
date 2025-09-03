@@ -1,0 +1,61 @@
+import React, { createContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api/api';
+
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+        if (storedToken) {
+          setToken(storedToken);
+        }
+      } catch (error) {
+        console.error('Storage error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadToken();
+  }, []);
+
+  const register = async (email, phone, password) => {
+    try {
+      const response = await api.post('/register', { email, phone, password });
+      const { jwt } = response.data;
+      await AsyncStorage.setItem('token', jwt);
+      setToken(jwt);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const login = async (emailOrPhone, password) => {
+    try {
+      const response = await api.post('/login', { emailOrPhone, password });
+      const { jwt } = response.data;
+      await AsyncStorage.setItem('token', jwt);
+      setToken(jwt);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    await AsyncStorage.removeItem('token');
+    setToken(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, loading, register, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

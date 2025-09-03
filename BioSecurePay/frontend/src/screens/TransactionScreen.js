@@ -1,0 +1,66 @@
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { initiateTransaction, authenticateTransaction, executeTransaction } from '../api/api';
+import BiometricPrompt from '../components/BiometricPrompt';
+import { logTransactionInitiated, logTransactionAuthenticated, logTransactionExecuted } from '../utils/Analytics';
+
+const TransactionScreen = () => {
+  const [amount, setAmount] = useState('');
+  const [recipient, setRecipient] = useState('');
+  const [accountId, setAccountId] = useState('');
+  const [transactionId, setTransactionId] = useState(null);
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  const initiate = async () => {
+    if (!amount || !recipient || !accountId) {
+      Alert.alert('Error', 'All fields required');
+      return;
+    }
+    try {
+      const response = await initiateTransaction(parseFloat(amount) * 100, recipient, accountId);
+      setTransactionId(response.data.transactionId);
+      logTransactionInitiated(parseFloat(amount) * 100, recipient);
+      setShowPrompt(true);
+    } catch (error) {
+      Alert.alert('Error', error.response?.data?.error || 'Failed to initiate');
+    }
+  };
+
+  const handleAuthSuccess = async (templates, types) => {
+    try {
+      await authenticateTransaction(transactionId, types, templates);
+      logTransactionAuthenticated();
+      await executeTransaction(transactionId);
+      logTransactionExecuted();
+      Alert.alert('Success', 'Transaction executed');
+      setShowPrompt(false);
+    } catch (error) {
+      Alert.alert('Error', error.response?.data?.error || 'Failed');
+      if (error.response?.status === 401) {
+        setShowPrompt(true); // Retry
+      }
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput style={styles.input} placeholder="Amount (NGN)" value={amount} onChangeText={setAmount} keyboardType="numeric" />
+      <TextInput style={styles.input} placeholder="Recipient (email)" value={recipient} onChangeText={setRecipient} />
+      <TextInput style={styles.input} placeholder="Account ID" value={accountId} onChangeText={setAccountId} />
+      <Button title="Initiate Transaction" onPress={initiate} />
+      {showPrompt && (
+        <BiometricPrompt
+          onSuccess={handleAuthSuccess}
+          types={parseFloat(amount) > 100 ? ['fingerprint', 'voice'] : ['fingerprint']}
+        />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, justifyContent: 'center' },
+  input: { borderWidth: 1, marginBottom: 10, padding: 10 },
+});
+
+export default TransactionScreen;
