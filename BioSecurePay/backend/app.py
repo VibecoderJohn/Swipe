@@ -5,7 +5,7 @@ from flask_jwt_extended import JWTManager
 from .config import Config
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
-from routes import bp as api_bp
+from .routes import bp as api_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -25,4 +25,5 @@ app.register_blueprint(api_bp, url_prefix='/api/v1')
 
 if __name__ == '__main__':
     app.run(debug=app.config['FLASK_ENV'] == 'development')
+
 
