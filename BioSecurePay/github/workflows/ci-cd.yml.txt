@@ -1,0 +1,104 @@
+name: CI/CD for BioSecure Pay
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check required files
+      run: |
+        if [ ! -f LICENSE ]; then
+          echo "LICENSE file missing"
+          exit 1
+        fi
+        if [ ! -f backend/routes.py ]; then
+          echo "backend/routes.py file missing"
+          exit 1
+        fi
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+    - name: Run tests
+      run: |
+        cd backend
+        pytest tests/test_routes.py -v
+    - name: Build Docker image
+      run: |
+        cd backend
+        docker build -t biosecure-pay-backend .
+    - name: Deploy to Render
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      run: |
+        docker login --username=_ --password=$RENDER_API_KEY registry.render.com
+        docker tag biosecure-pay-backend registry.render.com/biosecure-pay
+        docker push registry.render.com/biosecure-pay
+        curl -X POST https://api.render.com/v1/services/biosecure-pay/deploys \
+          -H "Authorization: Bearer $RENDER_API_KEY"
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+  frontend:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check required files
+      run: |
+        if [ ! -f LICENSE ]; then
+          echo "LICENSE file missing"
+          exit 1
+        fi
+        if [ ! -f frontend/src/api/api.js ]; then
+          echo "frontend/src/api/api.js file missing"
+          exit 1
+        fi
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm install
+    - name: Run tests
+      run: |
+        cd frontend
+        npm test
+    - name: Build Android APK
+      run: |
+        cd frontend/android
+        ./gradlew assembleRelease
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release.apk
+        path: frontend/android/app/build/outputs/apk/release/app-release.apk
+    - name: Build iOS IPA
+      run: |
+        cd frontend/ios
+        xcodebuild -workspace BioSecurePay.xcworkspace -scheme BioSecurePay -configuration Release archive -archivePath ./BioSecurePay.xcarchive
+        xcodebuild -exportArchive -archivePath ./BioSecurePay.xcarchive -exportOptionsPlist exportOptions.plist -exportPath .
+      env:
+        XCODE_TEAM_ID: ${{ secrets.XCODE_TEAM_ID }}
+    - name: Upload IPA
+      uses: actions/upload-artifact@v3
+      with:
+        name: BioSecurePay.ipa
+        path: frontend/ios/BioSecurePay.ipa
+
+env:
+  MONGO_URI: ${{ secrets.MONGO_URI }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  PAYSTACK_SECRET_KEY: ${{ secrets.PAYSTACK_SECRET_KEY }}
+  MONO_SECRET_KEY: ${{ secrets.MONO_SECRET_KEY }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
