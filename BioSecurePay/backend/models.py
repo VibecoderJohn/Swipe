@@ -1,20 +1,17 @@
-def get_app():
-    from .app import create_app
-    return create_app()
 from bson.objectid import ObjectId
 from datetime import datetime
 import bcrypt
 from cryptography.fernet import Fernet
 import requests
 from .config import Config
+from .app import mongo  # Import mongo instance, NOT create_app
 
-app = create_app()
 # Hardcoded encryption key for demo (use secure key management in prod)
 ENCRYPTION_KEY = b'QGQ2OYEWEanrk8RNHBWsO0KPVSk3JNaNcw38Pjw5bJg='
 cipher = Fernet(ENCRYPTION_KEY)
 
 class User:
-    collection = app.mongo.db.users
+    collection = mongo.db.users
 
     @classmethod
     def create(cls, email, phone, password):
@@ -63,7 +60,7 @@ class User:
         return user.get("linkedAccounts", []) if user else []
 
 class Biometric:
-    collection = app.mongo.db.biometrics
+    collection = mongo.db.biometrics
 
     @classmethod
     def enroll(cls, user_id, biometric_type, template):
@@ -99,7 +96,7 @@ class Biometric:
         return None
 
 class Transaction:
-    collection = app.mongo.db.transactions
+    collection = mongo.db.transactions
 
     @classmethod
     def initiate(cls, user_id, amount, recipient, account_id):
@@ -177,6 +174,3 @@ class Transaction:
     def list_for_user(cls, user_id):
         transactions = cls.collection.find({"userId": ObjectId(user_id)})
         return [{"id": str(t["_id"]), "amount": t["amount"], "status": t["status"], "createdAt": t["createdAt"]} for t in transactions]
-
-
-
