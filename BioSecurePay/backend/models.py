@@ -1,4 +1,6 @@
-from .app import create_app
+def get_app():
+    from .app import create_app
+    return create_app()
 from bson.objectid import ObjectId
 from datetime import datetime
 import bcrypt
@@ -175,4 +177,5 @@ class Transaction:
     def list_for_user(cls, user_id):
         transactions = cls.collection.find({"userId": ObjectId(user_id)})
         return [{"id": str(t["_id"]), "amount": t["amount"], "status": t["status"], "createdAt": t["createdAt"]} for t in transactions]
+
 
