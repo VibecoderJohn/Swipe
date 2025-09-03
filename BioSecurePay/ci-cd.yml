@@ -21,6 +21,10 @@ jobs:
           echo "backend/routes.py file missing"
           exit 1
         fi
+        if [ ! -f backend/config.py ]; then
+          echo "backend/config.py file missing"
+          exit 1
+        fi
         if [ ! -f frontend/src/api/api.js ]; then
           echo "frontend/src/api/api.js file missing"
           exit 1
