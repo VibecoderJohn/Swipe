@@ -139,27 +139,4 @@ def authenticate_transaction(transaction_id):
     data = request.get_json()
     biometric_types = data.get('biometricTypes', [])
     templates = data.get('templates', [])
-    if len(biometric_types) != len(templates):
-        return jsonify({"error": "Mismatched types and templates"}), 400
-    try:
-        Transaction.authenticate(transaction_id, user_id, biometric_types, templates)
-        return jsonify({"authenticated": True}), 200
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 401
-
-@bp.route('/transaction/execute/<transaction_id>', methods=['POST'])
-@jwt_required()
-def execute_transaction(transaction_id):
-    user_id = get_jwt_identity()
-    try:
-        paystack_id = Transaction.execute(transaction_id, user_id)
-        return jsonify({"status": "executed", "paystackTransactionId": paystack_id}), 200
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-
-@bp.route('/transactions', methods=['GET'])
-@jwt_required()
-def list_transactions():
-    user_id = get_jwt_identity()
-    transactions = Transaction.list_for_user(user_id)
-    return jsonify({"transactions": transactions}), 200
+    if len(biometric_types
