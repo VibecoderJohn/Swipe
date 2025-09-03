@@ -1,4 +1,4 @@
-flask==2.0.1
+  flask==2.0.1
   flask-pymongo==2.3.0
   flask-jwt-extended==4.4.4
   flask-cors==3.0.10
@@ -13,3 +13,4 @@ flask==2.0.1
   pytest-flask==1.2.0
   werkzeug==2.3.8
   setuptools<81
+
