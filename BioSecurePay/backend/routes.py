@@ -140,4 +140,6 @@ def authenticate_transaction(transaction_id):
     biometric_types = data.get('biometricTypes', [])
     templates = data.get('templates', [])
     if len(biometric_types) > 0:
+        pass
+
 
