@@ -2,7 +2,7 @@ services:
      - type: web
        name: biosecure-pay
        env: docker
-       repo: https://github.com/yourusername/BioSecurePay
+       repo: https://github.com/VibecoderJohn/BioSecurePay
        branch: main
        dockerCommand: gunicorn --bind 0.0.0.0:$PORT app:app
        workDir: /opt/render/project/src/BioSecurePay/backend
