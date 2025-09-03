@@ -6,7 +6,7 @@ from datetime import datetime
 import bcrypt
 from cryptography.fernet import Fernet
 import requests
-from config import Config
+from .config import Config
 
 app = create_app()
 # Hardcoded encryption key for demo (use secure key management in prod)
@@ -177,5 +177,6 @@ class Transaction:
     def list_for_user(cls, user_id):
         transactions = cls.collection.find({"userId": ObjectId(user_id)})
         return [{"id": str(t["_id"]), "amount": t["amount"], "status": t["status"], "createdAt": t["createdAt"]} for t in transactions]
+
 
 
