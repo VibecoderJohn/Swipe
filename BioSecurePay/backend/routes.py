@@ -139,4 +139,4 @@ def authenticate_transaction(transaction_id):
     data = request.get_json()
     biometric_types = data.get('biometricTypes', [])
     templates = data.get('templates', [])
-    if len(biometric_types
+    if len(biometric_types) > 0
