@@ -1,0 +1,28 @@
+ __pycache__/
+ *.pyc
+ *.pyo
+ *.pyd
+ .Python
+ *.egg-info/
+ dist/
+ build/
+ .venv/
+ venv/
+ 
+ # Environment variables
+ *.env
+ 
+ # Node.js
+ node_modules/
+ *.lock
+ 
+ # Build outputs
+ frontend/android/app/build/
+ frontend/ios/*.xcarchive
+ frontend/ios/*.ipa
+ 
+ # Editor files
+ .idea/
+ *.sublime-project
+ *.sublime-workspace
+ .vscode/
