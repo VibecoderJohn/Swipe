@@ -1,0 +1,19 @@
+services:
+     - type: web
+       name: biosecure-pay
+       env: docker
+       repo: https://github.com/yourusername/BioSecurePay
+       branch: main
+       dockerCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+       workDir: /opt/render/project/src/BioSecurePay/backend
+       envVars:
+         - key: MONGO_URI
+           fromSecret: MONGO_URI
+         - key: JWT_SECRET_KEY
+           fromSecret: JWT_SECRET_KEY
+         - key: PAYSTACK_SECRET_KEY
+           fromSecret: PAYSTACK_SECRET_KEY
+         - key: MONO_SECRET_KEY
+           fromSecret: MONO_SECRET_KEY
+         - key: SENTRY_DSN
+           fromSecret: SENTRY_DSN
