@@ -4,7 +4,7 @@ import bcrypt
 from cryptography.fernet import Fernet
 import requests
 from .config import Config
-from .app import mongo  # Import mongo instance, NOT create_app
+from .extensions import mongo  # Import mongo instance from extensions.py
 
 # Hardcoded encryption key for demo (use secure key management in prod)
 ENCRYPTION_KEY = b'QGQ2OYEWEanrk8RNHBWsO0KPVSk3JNaNcw38Pjw5bJg='
