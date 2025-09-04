@@ -17,3 +17,13 @@ services:
           fromSecret: MONO_SECRET_KEY
         - key: SENTRY_DSN
           fromSecret: SENTRY_DSN
+    - type: web
+      name: biosecure-pay-frontend
+      env: static
+      repo: https://github.com/VibecoderJohn/BioSecurePay
+      branch: main
+      buildCommand: npm install && npm run build
+      publishDir: frontend/build
+      envVars:
+        - key: REACT_APP_API_URL
+          value: https://biosecure-pay.onrender.com/api/v1
