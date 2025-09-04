@@ -1,47 +1,53 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Config from 'react-native-config';
+
+const API_URL = process.env.REACT_APP_API_URL || 'https://biosecure-pay.onrender.com/api/v1';
 
 const api = axios.create({
-  baseURL: Config.API_URL,
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem('token');
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('jwt');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      AsyncStorage.removeItem('token');
-    }
-    throw error;
-  }
-);
+export const register = (email, phone, password) =>
+  api.post('/register', { email, phone, password });
 
-export const enrollBiometric = async (type, template) => {
-  return api.post('/enroll-biometrics', { type, template });
-};
+export const login = (emailOrPhone, password) =>
+  api.post('/login', { emailOrPhone, password });
 
-export const linkAccount = async (monoCode) => {
-  return api.post('/accounts/link', { monoCode });
-};
+export const verifyKyc = (bvn, documents) =>
+  api.post('/kyc/verify', { bvn, documents });
 
-export const initiateTransaction = async (amount, recipient, accountId) => {
-  return api.post('/transaction/initiate', { amount, recipient, accountId });
-};
+export const enrollBiometrics = (type, template) =>
+  api.post('/enroll-biometrics', { type, template });
 
-export const authenticateTransaction = async (transactionId, biometricTypes, templates) => {
-  return api.post(`/transaction/authenticate/${transactionId}`, { biometricTypes, templates });
-};
+export const listBiometrics = () => api.get('/biometrics');
 
-export const executeTransaction = async (transactionId) => {
-  return api.post(`/transaction/execute/${transactionId}`);
-};
+export const deleteBiometric = (biometricId) =>
+  api.delete(`/biometrics/${biometricId}`);
+
+export const linkAccount = (monoCode) =>
+  api.post('/accounts/link', { monoCode });
+
+export const listAccounts = () => api.get('/accounts');
+
+export const initiateTransaction = (amount, recipient, accountId) =>
+  api.post('/transaction/initiate', { amount, recipient, accountId });
+
+export const authenticateTransaction = (transactionId, biometricTypes, templates) =>
+  api.post(`/transaction/authenticate/${transactionId}`, { biometricTypes, templates });
+
+export const executeTransaction = (transactionId) =>
+  api.post(`/transaction/execute/${transactionId}`);
+
+export const listTransactions = () => api.get('/transactions');
 
 export default api;
