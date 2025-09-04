@@ -3,7 +3,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from .models import User, Biometric, Transaction
 import bcrypt
 import requests
-from config import Config
+from .config import Config
 
 bp = Blueprint('api', __name__)
 
@@ -141,6 +141,7 @@ def authenticate_transaction(transaction_id):
     templates = data.get('templates', [])
     if len(biometric_types) > 0:
         pass
+
 
 
 
