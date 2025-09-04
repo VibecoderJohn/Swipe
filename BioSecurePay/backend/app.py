@@ -17,7 +17,7 @@ if app.config.get('SENTRY_DSN'):
         traces_sample_rate=1.0
     )
 
-mongo = PyMongo(app)
+mongo = PyMongo(app)  # This is now exported for models.py
 jwt = JWTManager(app)
 CORS(app)
 
@@ -26,4 +26,5 @@ app.register_blueprint(api_bp, url_prefix='/api/v1')
 if __name__ == '__main__':
     app.run(debug=app.config['FLASK_ENV'] == 'development')
 
-
+# Export mongo for models.py import
+# models.py will use: from .app import mongo
