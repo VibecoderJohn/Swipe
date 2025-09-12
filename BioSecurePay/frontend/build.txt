@@ -1,0 +1,2 @@
+cp -r BioSecurePay/frontend/build BioSecurePay/backend/build
+ls BioSecurePay/backend/build
