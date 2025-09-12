@@ -2,10 +2,10 @@ from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from flask_jwt_extended import JWTManager
-from .config import Config
+from config import Config
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
-from .routes import bp as api_bp
+from routes import bp as api_bp
 import os
 
 app = Flask(__name__, static_folder='build', static_url_path='/')
@@ -35,6 +35,8 @@ def serve_react(path):
         return jsonify({"error": "API endpoint not found"}), 404
     if path and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
+    if not os.path.exists(os.path.join(app.static_folder, 'index.html')):
+        return jsonify({"error": "Frontend files not found"}), 404
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
