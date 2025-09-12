@@ -1,40 +1,41 @@
-from flask import Flask
+from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
+from flask_pymongo import PyMongo
 from flask_jwt_extended import JWTManager
 from .config import Config
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from .routes import bp as api_bp
-from .extensions import mongo  # import the unbound instance
+import os
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
+app = Flask(__name__, static_folder='build', static_url_path='/')
+app.config.from_object(Config)
 
-    # Sentry integration
-    if app.config.get('SENTRY_DSN'):
-        sentry_sdk.init(
-            dsn=app.config['SENTRY_DSN'],
-            integrations=[FlaskIntegration()],
-            traces_sample_rate=1.0
-        )
+if app.config.get('SENTRY_DSN'):
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_DSN'],
+        integrations=[FlaskIntegration()],
+        traces_sample_rate=1.0
+    )
 
-    mongo.init_app(app)
-    jwt = JWTManager(app)
-    CORS(app)
+mongo = PyMongo(app)
+jwt = JWTManager(app)
+CORS(app, resources={r"/api/v1/*": {"origins": ["https://biosecure-pay.onrender.com", "http://localhost:3000"]}})
 
-    # Health check / root route
-    @app.route('/')
-    def health():
-        return {"status": "BioSecurePay API is running!"}, 200
+app.register_blueprint(api_bp, url_prefix='/api/v1')
 
-    # Register API blueprint
-    app.register_blueprint(api_bp, url_prefix='/api/v1')
+@app.route('/api')
+def api_status():
+    return jsonify({"status": "BioSecurePay API is running!"})
 
-    return app
-
-# For gunicorn or python app.py
-app = create_app()
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    if path.startswith('api/'):
+        return jsonify({"error": "API endpoint not found"}), 404
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     app.run(debug=app.config['FLASK_ENV'] == 'development')
