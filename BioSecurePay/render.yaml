@@ -1,29 +1,19 @@
 services:
-    - type: web
-      name: biosecure-pay
-      env: docker
-      repo: https://github.com/VibecoderJohn/BioSecurePay
-      branch: main
-      dockerCommand: gunicorn --bind 0.0.0.0:$PORT app:app
-      workDir: /opt/render/project/src/BioSecurePay/backend
-      envVars:
-        - key: MONGO_URI
-          fromSecret: MONGO_URI
-        - key: JWT_SECRET_KEY
-          fromSecret: JWT_SECRET_KEY
-        - key: PAYSTACK_SECRET_KEY
-          fromSecret: PAYSTACK_SECRET_KEY
-        - key: MONO_SECRET_KEY
-          fromSecret: MONO_SECRET_KEY
-        - key: SENTRY_DSN
-          fromSecret: SENTRY_DSN
-    - type: web
-      name: biosecure-pay-frontend
-      env: static
-      repo: https://github.com/VibecoderJohn/BioSecurePay
-      branch: main
-      buildCommand: npm install && npm run build
-      publishDir: frontend/build
-      envVars:
-        - key: REACT_APP_API_URL
-          value: https://biosecure-pay.onrender.com/api/v1
+  - type: web
+    name: biosecure-pay
+    env: docker
+    repo: https://github.com/yourusername/BioSecurePay
+    branch: main
+    dockerCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    workDir: /opt/render/project/src/BioSecurePay/backend
+    envVars:
+      - key: MONGO_URI
+        fromSecret: MONGO_URI
+      - key: JWT_SECRET_KEY
+        fromSecret: JWT_SECRET_KEY
+      - key: PAYSTACK_SECRET_KEY
+        fromSecret: PAYSTACK_SECRET_KEY
+      - key: MONO_SECRET_KEY
+        fromSecret: MONO_SECRET_KEY
+      - key: SENTRY_DSN
+        fromSecret: SENTRY_DSN
