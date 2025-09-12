@@ -1,4 +1,2 @@
-cd BioSecurePay/frontend
-npm install
-npm run build
-ls -R BioSecurePay/frontend/build
+cp -r BioSecurePay/frontend/build BioSecurePay/backend/build
+ls -R BioSecurePay/backend/build
